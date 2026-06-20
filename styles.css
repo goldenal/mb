@@ -1095,8 +1095,7 @@ section.block{
   .about-pair,
   .about-row2,
   .grid-3,
-  .duvets-grid,
-  .stores-grid{
+  .duvets-grid{
     display:flex;
     flex-direction:row;
     gap:14px;
@@ -1109,14 +1108,12 @@ section.block{
   .about-pair::-webkit-scrollbar,
   .about-row2::-webkit-scrollbar,
   .grid-3::-webkit-scrollbar,
-  .duvets-grid::-webkit-scrollbar,
-  .stores-grid::-webkit-scrollbar{display:none;}
+  .duvets-grid::-webkit-scrollbar{display:none;}
 
   .about-pair > *,
   .about-row2 > *,
   .grid-3 > *,
-  .duvets-grid > *,
-  .stores-grid > *{
+  .duvets-grid > *{
     flex:none;
     width:86%;
     scroll-snap-align:start;
@@ -1131,8 +1128,7 @@ section.block{
   }
 
   .grid-3,
-  .duvets-grid,
-  .stores-grid{
+  .duvets-grid{
     margin:0 -36px;
     padding-left:36px;
     padding-right:36px;
@@ -1165,6 +1161,17 @@ section.block{
   .contact-card .label{margin-bottom:2px;}
   .contact-card .value{font-size:16px;}
   .contact-card .sub{display:none;}
+
+  /* Store pickup locations: same reasoning as contact cards — show all 3
+     at once as compact stacked rows instead of a one-at-a-time carousel. */
+  .stores-card{padding:22px;}
+  .stores-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .store-card{padding:16px 18px;}
+  .store-card .store-name{font-size:16px;margin-bottom:4px;}
+  .store-card p{font-size:13.5px;margin:0 0 6px;}
 }
 
 @media (max-width:480px){
