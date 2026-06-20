@@ -929,12 +929,44 @@ section.block{
   .contact-cards{grid-template-columns:1fr;}
   .stores-grid{grid-template-columns:1fr;}
   .nav-links{flex-wrap:wrap;}
+
+  /* Selected Beds: horizontal chip picker above the showcase, so picking
+     a bed and seeing the result don't require scrolling past the list. */
+  .beds-list{
+    display:flex;
+    flex-direction:row;
+    gap:10px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    padding-bottom:6px;
+    margin-bottom:20px;
+  }
+  .beds-list::-webkit-scrollbar{display:none;}
+  .bed-row{
+    flex:none;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:4px;
+    padding:14px 18px;
+    border-bottom:none;
+    border-radius:18px;
+    background:#fff;
+    min-width:168px;
+  }
+  .bed-bar{display:none;}
+  .bed-row.active{background:var(--ink);}
+  .bed-row.active .bed-name{color:#fff;}
+  .bed-row.active .bed-sub{color:rgba(255,255,255,0.7);}
 }
 
 @media (max-width:640px){
   .nav{flex-direction:column;gap:14px;align-items:flex-start;}
   .nav-links{flex-wrap:wrap;justify-content:center;}
   .hero-deco-1,.hero-deco-2{display:none;}
+  .hero{min-height:600px;}
+  .hero-head{padding-top:30px;}
+  .about-wrap{margin-top:-160px;}
   .grid-3{grid-template-columns:1fr;}
   .duvets-grid{grid-template-columns:1fr;}
   .about-pair{grid-template-columns:1fr;}
