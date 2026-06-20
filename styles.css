@@ -973,4 +973,14 @@ section.block{
   .bed-stats{flex-wrap:wrap;gap:24px;}
   .delivery-card{padding:36px;}
   .footer-bottom{flex-direction:column;text-align:center;}
+
+  /* Section spacing was tuned for desktop (96-104px) and leaves oversized
+     gaps stacked on a narrow viewport — tighten it up between sections. */
+  section.block{padding-top:64px;}
+  .center-title{margin-bottom:36px;}
+  .row-head{margin-bottom:28px;}
+  .delivery-section{margin-top:64px;}
+  .contact-section{margin-top:64px;}
+  .contact-head{margin-bottom:30px;}
+  .footer-section{margin-top:64px;}
 }
