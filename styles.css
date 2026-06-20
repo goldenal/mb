@@ -446,6 +446,54 @@ section.block{
   letter-spacing:-0.02em;
 }
 
+.bed-nav-arrow{
+  display:none;
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(6px);
+  border:none;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:2;
+  padding:0;
+}
+
+.bed-nav-prev{left:16px;}
+.bed-nav-next{right:16px;}
+
+.bed-dots{
+  display:none;
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:100px;
+  justify-content:center;
+  gap:7px;
+  z-index:2;
+}
+
+.bed-dots .dot-btn{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.45);
+  border:none;
+  padding:0;
+  cursor:pointer;
+}
+
+.bed-dots .dot-btn.active{
+  width:18px;
+  border-radius:4px;
+  background:#fff;
+}
+
 /* ===== PRODUCT GRIDS ===== */
 
 .grid-3{
@@ -930,34 +978,11 @@ section.block{
   .stores-grid{grid-template-columns:1fr;}
   .nav-links{flex-wrap:wrap;}
 
-  /* Selected Beds: horizontal chip picker above the showcase, so picking
-     a bed and seeing the result don't require scrolling past the list. */
-  .beds-list{
-    display:flex;
-    flex-direction:row;
-    gap:10px;
-    overflow-x:auto;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-    padding-bottom:6px;
-    margin-bottom:20px;
-  }
-  .beds-list::-webkit-scrollbar{display:none;}
-  .bed-row{
-    flex:none;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:4px;
-    padding:14px 18px;
-    border-bottom:none;
-    border-radius:18px;
-    background:#fff;
-    min-width:168px;
-  }
-  .bed-bar{display:none;}
-  .bed-row.active{background:var(--ink);}
-  .bed-row.active .bed-name{color:#fff;}
-  .bed-row.active .bed-sub{color:rgba(255,255,255,0.7);}
+  /* Selected Beds: on mobile the picker list is replaced by arrow buttons
+     and dot indicators directly on the showcase image (see below). */
+  .beds-list{display:none;}
+  .bed-nav-arrow{display:flex;}
+  .bed-dots{display:flex;}
 }
 
 @media (max-width:640px){

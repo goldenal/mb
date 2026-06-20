@@ -24,6 +24,11 @@ const beds = [
 
 let activeBed = 0;
 
+function setActiveBed(idx) {
+  activeBed = (idx + beds.length) % beds.length;
+  renderBeds();
+}
+
 function renderBeds() {
   const list = document.getElementById('beds-list');
   list.innerHTML = '';
@@ -39,11 +44,19 @@ function renderBeds() {
         <div class="bed-sub">${bed.sub}</div>
       </div>
     `;
-    row.addEventListener('click', () => {
-      activeBed = idx;
-      renderBeds();
-    });
+    row.addEventListener('click', () => setActiveBed(idx));
     list.appendChild(row);
+  });
+
+  const dots = document.getElementById('bed-dots');
+  dots.innerHTML = '';
+  beds.forEach((bed, idx) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot-btn' + (idx === activeBed ? ' active' : '');
+    dot.setAttribute('aria-label', `Go to ${bed.name}`);
+    dot.addEventListener('click', () => setActiveBed(idx));
+    dots.appendChild(dot);
   });
 
   const active = beds[activeBed];
@@ -57,5 +70,8 @@ function renderBeds() {
   document.getElementById('bed-feel').textContent = active.feel;
   document.getElementById('bed-price').textContent = active.price;
 }
+
+document.getElementById('bed-prev').addEventListener('click', () => setActiveBed(activeBed - 1));
+document.getElementById('bed-next').addEventListener('click', () => setActiveBed(activeBed + 1));
 
 renderBeds();
