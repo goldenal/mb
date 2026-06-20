@@ -1073,9 +1073,7 @@ section.block{
   .hero{min-height:600px;}
   .hero-head{padding-top:30px;}
   .about-wrap{margin-top:-160px;}
-  .grid-3{grid-template-columns:1fr;}
-  .duvets-grid{grid-template-columns:1fr;}
-  .about-pair{grid-template-columns:1fr;}
+  .about-card{padding:24px;}
   .bed-stats{flex-wrap:wrap;gap:24px;}
   .delivery-card{padding:36px;}
   .footer-bottom{flex-direction:column;text-align:center;}
@@ -1089,4 +1087,71 @@ section.block{
   .contact-section{margin-top:64px;}
   .contact-head{margin-bottom:30px;}
   .footer-section{margin-top:64px;}
+
+  /* These grids used to stack into one long single column on phones.
+     Turn them into swipeable horizontal carousels instead, each card
+     ~86% wide with a peek of the next one to hint there's more. */
+  .about-pair,
+  .about-row2,
+  .grid-3,
+  .duvets-grid,
+  .contact-cards,
+  .stores-grid{
+    display:flex;
+    flex-direction:row;
+    gap:14px;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    scroll-snap-type:x mandatory;
+    padding-bottom:6px;
+  }
+  .about-pair::-webkit-scrollbar,
+  .about-row2::-webkit-scrollbar,
+  .grid-3::-webkit-scrollbar,
+  .duvets-grid::-webkit-scrollbar,
+  .contact-cards::-webkit-scrollbar,
+  .stores-grid::-webkit-scrollbar{display:none;}
+
+  .about-pair > *,
+  .about-row2 > *,
+  .grid-3 > *,
+  .duvets-grid > *,
+  .contact-cards > *,
+  .stores-grid > *{
+    flex:none;
+    width:86%;
+    scroll-snap-align:start;
+  }
+
+  .about-pair,
+  .about-row2{
+    margin:0 -24px;
+    padding-left:24px;
+    padding-right:24px;
+    scroll-padding-left:24px;
+  }
+
+  .grid-3,
+  .duvets-grid,
+  .contact-cards,
+  .stores-grid{
+    margin:0 -36px;
+    padding-left:36px;
+    padding-right:36px;
+    scroll-padding-left:36px;
+  }
+
+  .about-feature,
+  .duvet-feature{min-height:280px;}
+}
+
+@media (max-width:480px){
+  .hero h1{font-size:clamp(40px,12vw,48px);}
+  .about-intro h2{font-size:clamp(28px,9vw,34px);}
+  .center-title{font-size:clamp(32px,11vw,40px);}
+  .row-head h2{font-size:clamp(26px,8vw,32px);}
+  .contact-head h2{font-size:clamp(28px,8.5vw,34px);}
+  .footer-cta h2{font-size:clamp(26px,9vw,32px);}
+  .delivery-content h2{font-size:clamp(24px,8vw,30px);}
 }
