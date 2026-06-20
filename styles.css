@@ -1075,7 +1075,8 @@ section.block{
   .about-wrap{margin-top:-160px;}
   .about-card{padding:24px;}
   .bed-stats{flex-wrap:wrap;gap:24px;}
-  .delivery-card{padding:36px;}
+  .delivery-section{padding:0;}
+  .delivery-card{padding:36px;border-radius:0;}
   .footer-bottom{flex-direction:column;text-align:center;}
 
   /* Section spacing was tuned for desktop (96-104px) and leaves oversized
