@@ -23,6 +23,7 @@ const beds = [
 ];
 
 let activeBed = 0;
+let useLayerB = false;
 
 function setActiveBed(idx) {
   activeBed = (idx + beds.length) % beds.length;
@@ -60,9 +61,14 @@ function renderBeds() {
   });
 
   const active = beds[activeBed];
-  const showcase = document.getElementById('bed-showcase');
-  showcase.style.backgroundImage =
-    `linear-gradient(180deg,rgba(20,32,43,0.12) 0%,rgba(20,32,43,0.04) 45%,rgba(20,32,43,0.78) 100%),url('${active.img}')`;
+  const layerA = document.getElementById('bed-img-a');
+  const layerB = document.getElementById('bed-img-b');
+  const showLayer = useLayerB ? layerB : layerA;
+  const hideLayer = useLayerB ? layerA : layerB;
+  showLayer.style.backgroundImage = `url('${active.img}')`;
+  showLayer.classList.add('active');
+  hideLayer.classList.remove('active');
+  useLayerB = !useLayerB;
 
   document.getElementById('bed-name').textContent = active.name;
   document.getElementById('bed-desc').textContent = active.desc;
@@ -92,3 +98,85 @@ navLinks.querySelectorAll('a').forEach((link) => {
     navToggle.setAttribute('aria-expanded', 'false');
   });
 });
+
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ===== Scroll reveal ===== */
+
+if (!reducedMotion) {
+  const revealSelectors = [
+    '.about-intro', '.center-title', '.row-head', '.beds-grid',
+    '.delivery-card', '.contact-head', '.stores-card', '.footer-cta h2',
+  ];
+  document.querySelectorAll(revealSelectors.join(',')).forEach((el) => el.classList.add('reveal'));
+
+  const staggerGroupSelectors = [
+    '.about-pair', '.about-row2', '.grid-3', '.duvets-grid', '.contact-cards', '.stores-grid',
+  ];
+  staggerGroupSelectors.forEach((sel) => {
+    document.querySelectorAll(sel).forEach((group) => {
+      Array.from(group.children).forEach((child, i) => {
+        child.classList.add('reveal');
+        child.style.transitionDelay = `${i * 90}ms`;
+      });
+    });
+  });
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+}
+
+/* ===== Hero parallax + nav solidify (shared scroll listener) ===== */
+
+const heroEl = document.querySelector('.hero');
+const navEl = document.querySelector('.nav');
+let scrollTicking = false;
+
+function onScroll() {
+  const y = window.scrollY;
+
+  if (!reducedMotion && heroEl) {
+    const heroHeight = heroEl.offsetHeight;
+    if (y < heroHeight) {
+      heroEl.style.backgroundPositionY = `calc(38% + ${y * 0.3}px)`;
+    }
+  }
+
+  navEl.classList.toggle('scrolled', y > 24);
+  scrollTicking = false;
+}
+
+window.addEventListener('scroll', () => {
+  if (!scrollTicking) {
+    requestAnimationFrame(onScroll);
+    scrollTicking = true;
+  }
+});
+onScroll();
+
+/* ===== Scrollspy active nav link ===== */
+
+const navSections = ['top', 'beds', 'range', 'pillows', 'duvets', 'contact']
+  .map((id) => document.getElementById(id))
+  .filter(Boolean);
+
+const spyObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.querySelectorAll('a').forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+      });
+    }
+  });
+}, { rootMargin: '-45% 0px -45% 0px' });
+
+navSections.forEach((section) => spyObserver.observe(section));
