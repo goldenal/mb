@@ -5,6 +5,7 @@ import { getMattresses } from '../api/mattresses.js'
 import { getPillows } from '../api/pillows.js'
 import { getDuvets } from '../api/duvets.js'
 import { getStores } from '../api/stores.js'
+import { ShimmerCountCards } from './components/Shimmer.jsx'
 
 const SECTIONS = [
   { key: 'beds', label: 'Beds', to: '/office/beds' },
@@ -41,7 +42,7 @@ export default function Dashboard() {
       </div>
 
       {loading ? (
-        <p className="muted">Loading…</p>
+        <ShimmerCountCards count={5} />
       ) : (
         <div className="dashboard-counts">
           {SECTIONS.map(({ key, label, to }) => (

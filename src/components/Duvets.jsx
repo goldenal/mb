@@ -2,14 +2,33 @@ import { useState, useEffect } from 'react'
 import { getDuvets } from '../api/duvets.js'
 import { useSettings } from '../context/SettingsContext'
 
+function DuvetsShimmer() {
+  return (
+    <div className="product-shimmer-grid">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="product-shimmer-card">
+          <div className="product-shimmer-img" style={{ height: 240 }} />
+          <div className="product-shimmer-body">
+            <div className="shimmer-block" style={{ height: 18, width: '70%' }} />
+            <div className="shimmer-block" style={{ height: 12, width: '90%', marginTop: 8 }} />
+            <div className="shimmer-block" style={{ height: 12, width: '75%', marginTop: 4 }} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export default function Duvets() {
   const { settings } = useSettings()
   const [duvets, setDuvets] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getDuvets()
       .then(({ duvets }) => setDuvets(duvets))
       .catch(console.error)
+      .finally(() => setLoading(false))
   }, [])
 
   const featured = duvets.find((d) => d.is_featured) || duvets[0]
@@ -24,7 +43,8 @@ export default function Duvets() {
         </div>
         <p>{settings.duvetsSub}</p>
       </div>
-      <div className="duvets-grid">
+      {loading && <DuvetsShimmer />}
+      <div className="duvets-grid" style={{ display: loading ? 'none' : undefined }}>
         {featured && (
           <article className="duvet-feature">
             <div className="duvet-feature-body">

@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { getMattresses, createMattress, updateMattress, deleteMattress, reorderMattresses } from '../../api/mattresses.js'
 import ImageUpload from '../components/ImageUpload.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import { ShimmerList } from '../components/Shimmer.jsx'
 
-const EMPTY = { name: '', tag: '', dotColor: '#9ec0df', desc: '', price: '' }
+const EMPTY = { name: '', tag: '', dotColor: '#f97316', desc: '', price: '' }
 
 export default function MattressesManager() {
   const [mattresses, setMattresses] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY)
   const [imgFile, setImgFile] = useState(null)
@@ -20,6 +22,8 @@ export default function MattressesManager() {
       setMattresses(mattresses)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -29,7 +33,7 @@ export default function MattressesManager() {
 
   function startEdit(m) {
     setEditing(m)
-    setForm({ name: m.name, tag: m.tag, dotColor: m.dotColor || '#9ec0df', desc: m.desc, price: m.price })
+    setForm({ name: m.name, tag: m.tag, dotColor: m.dotColor || '#f97316', desc: m.desc, price: m.price })
     setImgFile(null)
     setError(null)
   }
@@ -83,30 +87,34 @@ export default function MattressesManager() {
     <div className="manager">
       <div className="manager-header">
         <h2>Mattresses</h2>
-        <button type="button" className="btn-primary" onClick={startAdd}>+ Add mattress</button>
+        <button type="button" className="btn-primary" onClick={startAdd}> Add mattress</button>
       </div>
 
       {error && <p className="office-error">{error}</p>}
 
-      <div className="item-list">
-        {mattresses.map((m, idx) => (
-          <div key={m.id} className="item-row">
-            {m.img && <img src={m.img} alt={m.name} className="item-thumb" />}
-            <div className="item-info">
-              <span className="dot" style={{ background: m.dotColor, display: 'inline-block', width: 10, height: 10, borderRadius: '50%', marginRight: 6 }} />
-              <div className="item-name">{m.name}</div>
-              <div className="item-meta">{m.tag} · {m.price}</div>
+      {loading ? (
+        <ShimmerList count={3} hasThumb />
+      ) : (
+        <div className="item-list">
+          {mattresses.map((m, idx) => (
+            <div key={m.id} className="item-row">
+              {m.img && <img src={m.img} alt={m.name} className="item-thumb" />}
+              <div className="item-info">
+                <span className="dot" style={{ background: m.dotColor, display: 'inline-block', width: 10, height: 10, borderRadius: '50%', marginRight: 6 }} />
+                <div className="item-name">{m.name}</div>
+                <div className="item-meta">{m.tag} · {m.price}</div>
+              </div>
+              <div className="item-actions">
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === mattresses.length - 1}>↓</button>
+                <button type="button" className="btn-edit" onClick={() => startEdit(m)}>Edit</button>
+                <button type="button" className="btn-danger" onClick={() => setDeleteTarget(m)}>Delete</button>
+              </div>
             </div>
-            <div className="item-actions">
-              <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
-              <button type="button" onClick={() => move(idx, 1)} disabled={idx === mattresses.length - 1}>↓</button>
-              <button type="button" className="btn-edit" onClick={() => startEdit(m)}>Edit</button>
-              <button type="button" className="btn-danger" onClick={() => setDeleteTarget(m)}>Delete</button>
-            </div>
-          </div>
-        ))}
-        {mattresses.length === 0 && <p className="muted">No mattresses yet.</p>}
-      </div>
+          ))}
+          {mattresses.length === 0 && <p className="muted">No mattresses yet.</p>}
+        </div>
+      )}
 
       <div className="manager-form-wrap">
         <h3>{editing ? `Editing: ${editing.name}` : 'Add new mattress'}</h3>
@@ -123,7 +131,7 @@ export default function MattressesManager() {
             <label>Dot colour</label>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <input type="color" value={form.dotColor} onChange={(e) => setField('dotColor', e.target.value)} style={{ width: 40, height: 36, padding: 2 }} />
-              <input value={form.dotColor} onChange={(e) => setField('dotColor', e.target.value)} placeholder="#9ec0df" style={{ flex: 1 }} />
+              <input value={form.dotColor} onChange={(e) => setField('dotColor', e.target.value)} placeholder="#f97316" style={{ flex: 1 }} />
             </div>
           </div>
           <div className="field">

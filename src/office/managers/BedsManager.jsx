@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react'
 import { getBeds, createBed, updateBed, deleteBed, reorderBeds } from '../../api/beds.js'
 import ImageUpload from '../components/ImageUpload.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import { ShimmerList } from '../components/Shimmer.jsx'
 
 const EMPTY = { name: '', sub: '', thickness: '', feel: '', price: '', desc: '' }
 
 export default function BedsManager() {
   const [beds, setBeds] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY)
   const [imgFile, setImgFile] = useState(null)
@@ -20,6 +22,8 @@ export default function BedsManager() {
       setBeds(beds)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -93,29 +97,33 @@ export default function BedsManager() {
     <div className="manager">
       <div className="manager-header">
         <h2>Beds</h2>
-        <button type="button" className="btn-primary" onClick={startAdd}>+ Add bed</button>
+        <button type="button" className="btn-primary" onClick={startAdd}> Add bed</button>
       </div>
 
       {error && <p className="office-error">{error}</p>}
 
-      <div className="item-list">
-        {beds.map((bed, idx) => (
-          <div key={bed.id} className="item-row">
-            {bed.img && <img src={bed.img} alt={bed.name} className="item-thumb" />}
-            <div className="item-info">
-              <div className="item-name">{bed.name}</div>
-              <div className="item-meta">{bed.feel} · {bed.price}</div>
+      {loading ? (
+        <ShimmerList count={3} hasThumb />
+      ) : (
+        <div className="item-list">
+          {beds.map((bed, idx) => (
+            <div key={bed.id} className="item-row">
+              {bed.img && <img src={bed.img} alt={bed.name} className="item-thumb" />}
+              <div className="item-info">
+                <div className="item-name">{bed.name}</div>
+                <div className="item-meta">{bed.feel} · {bed.price}</div>
+              </div>
+              <div className="item-actions">
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0} aria-label="Move up">↑</button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === beds.length - 1} aria-label="Move down">↓</button>
+                <button type="button" className="btn-edit" onClick={() => startEdit(bed)}>Edit</button>
+                <button type="button" className="btn-danger" onClick={() => setDeleteTarget(bed)}>Delete</button>
+              </div>
             </div>
-            <div className="item-actions">
-              <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0} aria-label="Move up">↑</button>
-              <button type="button" onClick={() => move(idx, 1)} disabled={idx === beds.length - 1} aria-label="Move down">↓</button>
-              <button type="button" className="btn-edit" onClick={() => startEdit(bed)}>Edit</button>
-              <button type="button" className="btn-danger" onClick={() => setDeleteTarget(bed)}>Delete</button>
-            </div>
-          </div>
-        ))}
-        {beds.length === 0 && <p className="muted">No beds yet. Add one below.</p>}
-      </div>
+          ))}
+          {beds.length === 0 && <p className="muted">No beds yet. Add one below.</p>}
+        </div>
+      )}
 
       <div className="manager-form-wrap">
         <h3>{editing ? `Editing: ${editing.name}` : 'Add new bed'}</h3>

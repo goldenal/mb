@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { getSettings, updateSettings } from '../../api/settings.js'
 import { useSettings } from '../../context/SettingsContext.jsx'
+import { ShimmerForm } from '../components/Shimmer.jsx'
 
 const STAT_DEFAULTS = [
   { num: 'Affordable', sub: 'doorstep delivery' },
@@ -110,7 +111,13 @@ export default function SettingsManager() {
     }
   }
 
-  if (!form) return <div className="manager"><p className="muted">Loading settings…</p></div>
+  if (!form) return (
+    <div className="manager">
+      <div className="manager-header"><h2>Site Settings</h2></div>
+      <ShimmerForm rows={6} />
+      <ShimmerForm rows={4} />
+    </div>
+  )
 
   const Field = ({ label, fieldKey, textarea, rows = 3, hint }) => (
     <div className={`field${textarea ? ' field-full' : ''}`}>

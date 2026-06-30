@@ -5,6 +5,7 @@ import { useSettings } from '../context/SettingsContext'
 export default function Beds() {
   const { settings } = useSettings()
   const [beds, setBeds] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeBedIdx, setActiveBedIdx] = useState(0)
   const [imgLayers, setImgLayers] = useState({ a: '', b: '' })
   const [activeLayer, setActiveLayer] = useState('a')
@@ -16,6 +17,7 @@ export default function Beds() {
         if (beds.length > 0) setImgLayers({ a: beds[0].img, b: '' })
       })
       .catch(console.error)
+      .finally(() => setLoading(false))
   }, [])
 
   function showBed(idx) {
@@ -32,6 +34,28 @@ export default function Beds() {
   }
 
   const active = beds[activeBedIdx]
+
+  if (loading) {
+    return (
+      <section id="beds" className="block">
+        <div className="shimmer-block" style={{ height: 56, width: '40%', margin: '0 auto 56px', borderRadius: 8 }} />
+        <div className="beds-grid" style={{ gap: 32 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div className="shimmer-block" style={{ width: 3, height: 48 }} />
+                <div style={{ flex: 1 }}>
+                  <div className="shimmer-block" style={{ height: 16, width: '70%', marginBottom: 6 }} />
+                  <div className="shimmer-block" style={{ height: 11, width: '50%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="shimmer-block" style={{ borderRadius: 32, minHeight: 480 }} />
+        </div>
+      </section>
+    )
+  }
 
   if (beds.length === 0) {
     return (

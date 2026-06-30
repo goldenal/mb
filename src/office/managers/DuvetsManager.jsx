@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { getDuvets, createDuvet, updateDuvet, deleteDuvet, reorderDuvets } from '../../api/duvets.js'
 import ImageUpload from '../components/ImageUpload.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import { ShimmerList } from '../components/Shimmer.jsx'
 
 const CATEGORIES = ['duvet', 'bedcover', 'pillowcase', 'other']
 const EMPTY = { name: '', desc: '', price: '', category: 'duvet', isFeatured: false }
 
 export default function DuvetsManager() {
   const [duvets, setDuvets] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY)
   const [imgFile, setImgFile] = useState(null)
@@ -21,6 +23,8 @@ export default function DuvetsManager() {
       setDuvets(duvets)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -88,29 +92,33 @@ export default function DuvetsManager() {
     <div className="manager">
       <div className="manager-header">
         <h2>Duvets &amp; Bedcovers</h2>
-        <button type="button" className="btn-primary" onClick={startAdd}>+ Add item</button>
+        <button type="button" className="btn-primary" onClick={startAdd}>Add item</button>
       </div>
 
       {error && <p className="office-error">{error}</p>}
 
-      <div className="item-list">
-        {duvets.map((d, idx) => (
-          <div key={d.id} className="item-row">
-            {d.img && <img src={d.img} alt={d.name} className="item-thumb" />}
-            <div className="item-info">
-              <div className="item-name">{d.name}</div>
-              <div className="item-meta">{d.category} · {d.price}{d.is_featured ? ' · ⭐ featured' : ''}</div>
+      {loading ? (
+        <ShimmerList count={4} hasThumb />
+      ) : (
+        <div className="item-list">
+          {duvets.map((d, idx) => (
+            <div key={d.id} className="item-row">
+              {d.img && <img src={d.img} alt={d.name} className="item-thumb" />}
+              <div className="item-info">
+                <div className="item-name">{d.name}</div>
+                <div className="item-meta">{d.category} · {d.price}{d.is_featured ? ' · ★ featured' : ''}</div>
+              </div>
+              <div className="item-actions">
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === duvets.length - 1}>↓</button>
+                <button type="button" className="btn-edit" onClick={() => startEdit(d)}>Edit</button>
+                <button type="button" className="btn-danger" onClick={() => setDeleteTarget(d)}>Delete</button>
+              </div>
             </div>
-            <div className="item-actions">
-              <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
-              <button type="button" onClick={() => move(idx, 1)} disabled={idx === duvets.length - 1}>↓</button>
-              <button type="button" className="btn-edit" onClick={() => startEdit(d)}>Edit</button>
-              <button type="button" className="btn-danger" onClick={() => setDeleteTarget(d)}>Delete</button>
-            </div>
-          </div>
-        ))}
-        {duvets.length === 0 && <p className="muted">No duvets yet.</p>}
-      </div>
+          ))}
+          {duvets.length === 0 && <p className="muted">No duvets yet.</p>}
+        </div>
+      )}
 
       <div className="manager-form-wrap">
         <h3>{editing ? `Editing: ${editing.name}` : 'Add new item'}</h3>

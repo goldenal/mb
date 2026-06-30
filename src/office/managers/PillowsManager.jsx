@@ -9,11 +9,13 @@ import {
 } from '../../api/pillows.js'
 import ImageUpload from '../components/ImageUpload.jsx'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import { ShimmerList } from '../components/Shimmer.jsx'
 
 const EMPTY = { slug: '', name: '', desc: '', price: '', sizes: [], featured: false }
 
 export default function PillowsManager() {
   const [pillows, setPillows] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY)
   const [imgFile, setImgFile] = useState(null)
@@ -28,6 +30,8 @@ export default function PillowsManager() {
       setPillows(pillows)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -142,7 +146,7 @@ export default function PillowsManager() {
     <div className="manager">
       <div className="manager-header">
         <h2>Pillows</h2>
-        <button type="button" className="btn-primary" onClick={startAdd}>+ Add pillow</button>
+        <button type="button" className="btn-primary" onClick={startAdd}> Add pillow</button>
       </div>
 
       {error && <p className="office-error">{error}</p>}
@@ -158,25 +162,29 @@ export default function PillowsManager() {
       </div>
 
       {tab === 'list' && (
-        <div className="item-list">
-          {pillows.map((p, idx) => (
-            <div key={p.id} className="item-row">
-              {p.img && <img src={p.img} alt={p.name} className="item-thumb" />}
-              <div className="item-info">
-                <div className="item-name">{p.name}</div>
-                <div className="item-meta">{p.slug} {p.featured ? '· ⭐ featured' : ''}</div>
+        loading ? (
+          <ShimmerList count={4} hasThumb />
+        ) : (
+          <div className="item-list">
+            {pillows.map((p, idx) => (
+              <div key={p.id} className="item-row">
+                {p.img && <img src={p.img} alt={p.name} className="item-thumb" />}
+                <div className="item-info">
+                  <div className="item-name">{p.name}</div>
+                  <div className="item-meta">{p.slug} {p.featured ? '· ★ featured' : ''}</div>
+                </div>
+                <div className="item-actions">
+                  <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
+                  <button type="button" onClick={() => move(idx, 1)} disabled={idx === pillows.length - 1}>↓</button>
+                  <button type="button" onClick={() => toggleFeatured(p)}>{p.featured ? 'Unfeature' : 'Feature'}</button>
+                  <button type="button" className="btn-edit" onClick={() => startEdit(p)}>Edit</button>
+                  <button type="button" className="btn-danger" onClick={() => setDeleteTarget(p)}>Delete</button>
+                </div>
               </div>
-              <div className="item-actions">
-                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
-                <button type="button" onClick={() => move(idx, 1)} disabled={idx === pillows.length - 1}>↓</button>
-                <button type="button" onClick={() => toggleFeatured(p)}>{p.featured ? 'Unfeature' : 'Feature'}</button>
-                <button type="button" className="btn-edit" onClick={() => startEdit(p)}>Edit</button>
-                <button type="button" className="btn-danger" onClick={() => setDeleteTarget(p)}>Delete</button>
-              </div>
-            </div>
-          ))}
-          {pillows.length === 0 && <p className="muted">No pillows yet.</p>}
-        </div>
+            ))}
+            {pillows.length === 0 && <p className="muted">No pillows yet.</p>}
+          </div>
+        )
       )}
 
       {tab === 'featured' && (
@@ -230,7 +238,7 @@ export default function PillowsManager() {
                   <button type="button" className="btn-danger" onClick={() => removeSize(i)}>×</button>
                 </div>
               ))}
-              <button type="button" className="btn-secondary" style={{ marginTop: 6 }} onClick={addSize}>+ Add size</button>
+              <button type="button" className="btn-secondary" style={{ marginTop: 6 }} onClick={addSize}> Add size</button>
             </div>
 
             <div className="field">

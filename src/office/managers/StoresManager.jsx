@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { getStores, createStore, updateStore, deleteStore, reorderStores } from '../../api/stores.js'
 import ConfirmDialog from '../components/ConfirmDialog.jsx'
+import { ShimmerList } from '../components/Shimmer.jsx'
 
 const EMPTY = { name: '', address: '', hours: '' }
 
 export default function StoresManager() {
   const [stores, setStores] = useState([])
+  const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(EMPTY)
   const [deleteTarget, setDeleteTarget] = useState(null)
@@ -18,6 +20,8 @@ export default function StoresManager() {
       setStores(stores)
     } catch (err) {
       setError(err.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -77,28 +81,32 @@ export default function StoresManager() {
     <div className="manager">
       <div className="manager-header">
         <h2>Store Locations</h2>
-        <button type="button" className="btn-primary" onClick={startAdd}>+ Add store</button>
+        <button type="button" className="btn-primary" onClick={startAdd}> Add store</button>
       </div>
 
       {error && <p className="office-error">{error}</p>}
 
-      <div className="item-list">
-        {stores.map((s, idx) => (
-          <div key={s.id} className="item-row">
-            <div className="item-info">
-              <div className="item-name">{s.name}</div>
-              <div className="item-meta">{s.hours}</div>
+      {loading ? (
+        <ShimmerList count={3} />
+      ) : (
+        <div className="item-list">
+          {stores.map((s, idx) => (
+            <div key={s.id} className="item-row">
+              <div className="item-info">
+                <div className="item-name">{s.name}</div>
+                <div className="item-meta">{s.hours}</div>
+              </div>
+              <div className="item-actions">
+                <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
+                <button type="button" onClick={() => move(idx, 1)} disabled={idx === stores.length - 1}>↓</button>
+                <button type="button" className="btn-edit" onClick={() => startEdit(s)}>Edit</button>
+                <button type="button" className="btn-danger" onClick={() => setDeleteTarget(s)}>Delete</button>
+              </div>
             </div>
-            <div className="item-actions">
-              <button type="button" onClick={() => move(idx, -1)} disabled={idx === 0}>↑</button>
-              <button type="button" onClick={() => move(idx, 1)} disabled={idx === stores.length - 1}>↓</button>
-              <button type="button" className="btn-edit" onClick={() => startEdit(s)}>Edit</button>
-              <button type="button" className="btn-danger" onClick={() => setDeleteTarget(s)}>Delete</button>
-            </div>
-          </div>
-        ))}
-        {stores.length === 0 && <p className="muted">No stores yet.</p>}
-      </div>
+          ))}
+          {stores.length === 0 && <p className="muted">No stores yet.</p>}
+        </div>
+      )}
 
       <div className="manager-form-wrap">
         <h3>{editing ? `Editing: ${editing.name}` : 'Add new store'}</h3>
