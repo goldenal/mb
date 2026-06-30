@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: [
       process.env.CLIENT_ORIGIN || 'http://localhost:5173',
-      'https://mb-indol-omega.vercel.app/',
+      'https://mb-indol-omega.vercel.app',
       'http://localhost:3000',
     ],
     credentials: true,
