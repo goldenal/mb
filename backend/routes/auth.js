@@ -24,10 +24,9 @@ router.post(
     const errors = validationResult(req)
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
 
-    const existing = await Admin.findOne()
-    if (existing) return res.status(403).json({ error: 'Admin already set up' })
-
     const { email, password, name } = req.body
+    const existing = await Admin.findOne({ where: { email } })
+    if (existing) return res.status(409).json({ error: 'An admin with that email already exists' })
     const passwordHash = await Admin.hashPassword(password)
     const admin = await Admin.create({ email, passwordHash, name: name || 'Admin' })
     res.status(201).json({
