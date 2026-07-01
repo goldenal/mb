@@ -92,9 +92,9 @@ export default function LandingPage() {
     <div className="wrap">
       <Hero />
       <About />
-      <Beds />
-      <Mattresses />
       <Pillows featuredPillows={featuredPillows} onOpenPillow={setPillowModalId} onOpenAllPillows={() => setAllPillowsOpen(true)} />
+      {/* <Beds /> */}
+      <Mattresses />
       <Duvets />
       <Delivery />
       <Contact />
